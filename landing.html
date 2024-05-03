@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body{
+        background-color: #264c78;
+    }
+    .square {
+        width: 100px;
+        height: 100px;
+        border: 2px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+    }
+
+    .board-row {
+        display: flex;
+    }
+
+    .btn-reset {
+        margin-top: 20px;
+    }
+
+    .text-center{
+        color: white;
+    }
+</style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-center">
+            <h1 class="text-center mb-4">TIC TAC TOE</h1>
+            <div id="board" class="border border-dark rounded-1g p-3">
+                <div class="board-row">
+                    <div class="square" data-index="0"></div>
+                    <div class="square" data-index="1"></div>
+                    <div class="square" data-index="2"></div>
+                </div>
+                <div class="board-row">
+                    <div class="square" data-index="3"></div>
+                    <div class="square" data-index="4"></div>
+                    <div class="square" data-index="5"></div>
+                </div>
+                <div class="board-row">
+                    <div class="square" data-index="6"></div>
+                    <div class="square" data-index="7"></div>
+                    <div class="square" data-index="8"></div>
+                </div>
+            </div>
+            <button id="reset" class="btn btn-primary btn-block btn-reset">Reset</button>
+            <button id="returnHome" class="btn btn-secondary btn-block btn-reset">Return to Homepage</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
+    const squares = document.querySelectorAll('.square');
+    const resetButton = document.getElementById('reset');
+    const returnHomeButton = document.getElementById('returnHome');
+
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let moves = 0;
+
+    const checkWinner = () => {
+        const winningCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+            [0, 4, 8], [2, 4, 6]             
+        ];
+
+        for (let combo of winningCombos) {
+            const [a, b, c] = combo;
+            if (squares[a].textContent && squares[a].textContent === squares[b].textContent && squares[a].textContent === squares[c].textContent) {
+                return squares[a].textContent;
+            }
+        }
+
+        if (moves === 9) return 'Draw';
+
+        return null;
+    };
+
+    const handleSquareClick = (e) => {
+        const square = e.target;
+
+        if (!gameActive || square.textContent !== '') return;
+
+        square.textContent = currentPlayer;
+        moves++;
+
+        const winner = checkWinner();
+        if (winner) {
+            if (winner !== 'Draw') {
+                alert(`Player ${winner} wins!`);
+            } else {
+                alert('It\'s a draw!');
+            }
+            gameActive = false;
+            return;
+        }
+
+        setTimeout(computerMove, 500);
+    };
+
+    const computerMove = () => {
+        let emptySquares = [...squares].filter(square => square.textContent === '');
+        if (emptySquares.length > 0) {
+            let randomIndex = Math.floor(Math.random() * emptySquares.length);
+            emptySquares[randomIndex].textContent = currentPlayer === 'X' ? 'O' : 'X';
+            moves++;
+
+            const winner = checkWinner();
+            if (winner) {
+                if (winner !== 'Draw') {
+                    alert(`Player ${winner} wins!`);
+                } else {
+                    alert('It\'s a draw!');
+                }
+                gameActive = false;
+                return;
+            }
+        }
+    };
+
+    const resetGame = () => {
+        squares.forEach(square => {
+            square.textContent = '';
+        });
+        currentPlayer = 'X';
+        gameActive = true;
+        moves = 0;
+    };
+
+    const returnToHomepage = () => {
+        window.location.href = '2nd.html';
+    };
+
+    squares.forEach(square => {
+        square.addEventListener('click', handleSquareClick);
+    });
+
+    resetButton.addEventListener('click', resetGame);
+    returnHomeButton.addEventListener('click', returnToHomepage);
+});
+</script>
+</body>
+</html>
